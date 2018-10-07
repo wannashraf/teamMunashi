@@ -31,16 +31,36 @@ void daily()
 {
 }
 
-void weekly()
+void monthly()
 {
 }
 
-void monthly()
+void yearly()
 {
 }
 
 void caloriesearch()
 {
+	int number;
+	while(1){
+		printf("日別、月別、年別のカロリーを表示します\n数字を入力してください（1.日別　2.月別　3.年別 0.終了）-->" );
+		scanf("%d",&number);
+		if (number==1){
+			printf("1.日別\n");
+			daily();
+		} else if(number==2){
+			printf("2.月別\n");
+			monthly();
+		} else if(number==3){
+			printf("3.年別\n");
+			yearly();
+		} else if(number==0){
+			printf("終了します\n");
+			break;
+		} else {
+			printf("もう一度入力してください\n");
+		}
+	}
 }
 
 //木村担当//
