@@ -46,9 +46,43 @@ void caloriesearch()
 //木村担当//
 void Sort()
 {
+	int total;
+	FILE *fi;
+	
+	fi = fopen("","r");
+	
+	total = 0;
+	while(fi != EOF){
+		fscanf("%d / %d / %d (%c) %c %s %dkcal",&data[total].year,&data[total].month,&data[total]day,&data[total].youbi,&data[total].time,data[total].menu,&data[total].cal);
+		total++;
+	}
+	YearSort();
 }
 
-void YearSort() 
-{
+void YearSort(){
+	int i,j;				//変数
+	struct Data a;
+
+	for(i=0;i<total;i++){
+		for(j=i;j<total;j++){
+			if(data[i].year > data[j].year){
+				a = data[i];
+				data[i] = data[j];
+				data[j] = a;
+			}else if(data[i].year = data[j].year){
+				if(data[i].month > data[i].month){
+					a = data[i];
+					data[i] = data[j];
+					data[j] = a;
+				}else if(data[i].month = data[j].month){
+					if(data[i].day > data[j].day){
+						a = data[i];
+						data[i] = data[j];
+						data[j] = a;
+					}
+				}
+			}
+		}
+	}
 }
 
