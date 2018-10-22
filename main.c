@@ -22,35 +22,145 @@ void Menu(){
 }
 
 //森、大谷担当//
-void Input() {
-	char ymd[10];
-	fa=fopen("Calorie.txt","a");
-	if(fa==NULL){
-		printf("ファイルが開けませんでした！\n");
+void Input();
+
+int main()
+{
+	Input();
+	return 0;
+}
+void Input()
+{
+	char breakfast[100],lunch[100],dinner[100];
+	int year,month,day,breakfastcalorie,lunchcalorie,dinnercalorie,food;
+	FILE *fa;
+	fa=fopen("Calorie.txt","w");
+		if(fa==NULL){
+			printf("ファイルが開けませんでした！\n");
+		}
+		printf("＊食事の新規入力を行います＊\n");
+		printf("＊（「0」で入力を終了します）＊\n");
+
+		printf("＊食事した日付を入力してください＊\n");
+
+		printf("＊何年？＊\n");
+		printf("＊例：西暦2000年→「2000」と入力してください＊\n");
+		scanf("%d",&year);
+
+		printf("＊何月？＊\n");
+		printf("＊例：1月→「01」と入力してください＊\n");
+		scanf("%d",&month);
+
+		printf("＊何日？＊\n");
+		printf("＊例：31日→「31」と入力してください＊\n");
+		scanf("%d",&day);
+
+		printf("＊では食事と食事のカロリーの入力を開始します！＊\n");
+		printf("＊入力を終了し、次に移りたいときは「0」を入力してください＊\n");
+
+	while(1){
+		printf("＊%d年%d月%d日の朝食はなんですか？＊\n",year,month,day);
+		scanf("%s",breakfast);
+		if(breakfast[0]=='0') break;
+		printf("＊朝食のカロリーはいくらですか？＊\n");
+		printf("＊例：2000kcal→「2000」と入力してください＊\n");
+		scanf("%d",&breakfastcalorie);
+		fprintf(fa,"%d/%d/%d/ breakfast / %s /%d\n",year,month,day,breakfast,breakfastcalorie);
 	}
-	printf("＊食事の新規追加を行います＊\n");
-	printf("＊（「0」で入力を終了します）＊\n");
-	printf("＊食事した日付を入力してください＊\n");
-	printf("＊（例：2018年1月1日→2018/01/01）＊\n");
-	scanf("%s",&ymd[10]);
-	printf("＊では食事の入力を開始します！＊\n");
-	printf("＊何も食べていない時は「0」を入力してください！＊\n");
-	printf("＊%d年%d月%d日の朝食はなんですか？＊\n",year,month,day);
-	scanf("%s",&morning);
-	printf("朝食のカロリーはいくらですか？＊\n");
-	scanf("%d",&morningcalorie);
-	printf("＊%d年%d月%d日の昼食はなんですか？＊\n",year,month,day);
-	scanf("%s",&lunch);
-	printf("昼食のカロリーはいくらですか？＊\n");
-	scanf("%d",&lunchcalorie);
-	printf("＊%d年%d月%d日の夕食はなんですか？＊\n",year,month,day);
-	scanf("%s",&dinner);
-	printf("夕食のカロリーはいくらですか？＊\n");
-	scanf("%d",&dinnercalorie);
-	printf("＊%d年%d月%d日の間食はなんですか？＊\n",year,month,day);
-	scanf("%s",&break);
-	printf("夕食のカロリーはいくらですか？＊\n");
-	scanf("%d",&break);
+
+	while(1){
+		printf("＊%d年%d月%d日の昼食はなんですか？＊\n",year,month,day);
+		scanf("%s",lunch);
+		if(lunch[0]=='0') break;
+		printf("＊昼食のカロリーはいくらですか？＊\n");
+		scanf("%d",&lunchcalorie);
+		fprintf(fa,"%d/%d/%d/ lunch / %s /%d\n",year,month,day,lunch,lunchcalorie);
+	}
+
+	while(1){
+		printf("＊%d年%d月%d日の夕食はなんですか？＊\n",year,month,day);
+		scanf("%s",dinner);
+		if(dinner[0]=='0') break;
+		printf("＊夕食のカロリーはいくらですか？＊\n");
+		scanf("%d",&dinnercalorie);
+		fprintf(fa,"%d/%d/%d/ dinner / %s /%d\n",year,month,day,dinner,dinnercalorie);
+	}
+	printf("＊%d年%d月%d日の食事の入力が完了しました！＊\n",year,month,day);
+	printf("＊メニュー画面に戻ります＊\n");
+	fclose(fa);
+}
+
+void Add()
+{
+	char breakfast[100],lunch[100],dinner[100];
+	int year,month,day,breakfastcalorie,lunchcalorie,dinnercalorie;
+	FILE *fa;
+	fa=fopen("Calorie.txt","a");
+		if(fa==NULL){
+			printf("ファイルが開けませんでした！\n");
+		}
+		printf("＊食事の追加を行います＊\n");
+		printf("＊（「0」で入力を終了します）＊\n");
+
+		printf("＊食事を追加したい日付を入力してください＊\n");
+
+		printf("＊何年？＊\n");
+		printf("＊例：西暦2000年→「2000」と入力してください＊\n");
+		scanf("%d",&year);
+
+		printf("＊何月？＊\n");
+		printf("＊例：1月→「01」と入力してください＊\n");
+		scanf("%d",&month);
+
+		printf("＊何日？＊\n");
+		printf("＊例：31日→「31」と入力してください＊\n");
+		scanf("%d",&day);
+
+		printf("＊追加したい食事を以下から選んで下さい＊");
+		printf("＊朝食-→1を入力して下さい＊");
+		printf("＊昼食-→2を入力して下さい＊");
+		printf("＊夕食-→3を入力して下さい＊");
+		scanf("%d",&food);
+
+switch (food) {
+	case 1:
+	while(1){
+		printf("＊%d年%d月%d日の朝食はなんですか？＊\n",year,month,day);
+		scanf("%s",breakfast);
+		if(breakfast[0]=='0') break;
+		printf("＊朝食のカロリーはいくらですか？＊\n");
+		printf("＊例：2000kcal→「2000」と入力してください＊\n");
+		scanf("%d",&breakfastcalorie);
+		fprintf(fa,"%d/%d/%d/ breakfast / %s /%d\n",year,month,day,breakfast,breakfastcalorie);
+	}
+
+	case 2:
+	while(1){
+		printf("＊%d年%d月%d日の昼食はなんですか？＊\n",year,month,day);
+		scanf("%s",lunch);
+		if(lunch[0]=='0') break;
+		printf("＊昼食のカロリーはいくらですか？＊\n");
+		scanf("%d",&lunchcalorie);
+		fprintf(fa,"%d/%d/%d/ lunch / %s /%d\n",year,month,day,lunch,lunchcalorie);
+	}
+
+  case 3:
+	while(1){
+		printf("＊%d年%d月%d日の夕食はなんですか？＊\n",year,month,day);
+		scanf("%s",dinner);
+		if(dinner[0]=='0') break;
+		printf("＊夕食のカロリーはいくらですか？＊\n");
+		scanf("%d",&dinnercalorie);
+		fprintf(fa,"%d/%d/%d/ dinner / %s /%d\n",year,month,day,dinner,dinnercalorie);
+	}
+}
+
+	printf("＊%d年%d月%d日の食事の入力が完了しました！＊\n",year,month,day);
+	printf("＊メニュー画面に戻ります＊\n");
+	fclose(fa);
+}
+
+
 
 }
 
@@ -77,6 +187,6 @@ void Sort()
 }
 
 void YearSort() 
+void YearSort()
 {
 }
-
