@@ -121,6 +121,7 @@ void Add()
 		printf("＊昼食-→2を入力して下さい＊");
 		printf("＊夕食-→3を入力して下さい＊");
 		scanf("%d",&food);
+		printf("＊入力を終了したいときは「0」を入力してください＊\n");
 
 switch (food) {
 	case 1:
