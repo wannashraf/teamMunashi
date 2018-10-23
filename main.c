@@ -4,7 +4,6 @@ struct Data {
 	int year;		//年
 	int month;		//月
 	int day;		//日
-	char youbi;		//曜日
 	char time[10];		//朝昼夜
 	char menu[50];	//メニュー
 	int cal;		//カロリー
@@ -20,8 +19,6 @@ void Delete();
 
 int main(){
 	Menu();
-	Read();
-	Delete();
 	return 0;
 }
 
@@ -136,7 +133,6 @@ void Delete(){
 
 	fw = fopen("test.txt","w");
 	printf("消去する日付を入力してください\n");
-	fflush(0);
 	scanf("%d",&a.year);
 	scanf("%d",&a.month);
 	scanf("%d",&a.day);
@@ -146,7 +142,6 @@ void Delete(){
 		}
 	}
 	printf("削除したい番号を入力してください\n");
-	fflush(0);
 	scanf("%d",&n);
 	total--;
 	for(i=n;i<total;i++){
