@@ -42,8 +42,7 @@ void Input() {
 /// <param name="lnum">検索する期間の最後の月の日数</param>
 int i,total,f,l,t,count,k,total_cal[100],storage,num,lnum;
 /// <param name="choice">メニュー選択用</param>
-/// <param name="dummy">メニュー選択時のEnterボタン処理用ダミー変数</param>
-char choice,dummy;
+char choice;
 
 /// <param name="y">年</param>
 /// <param name="m">月</param>
@@ -200,6 +199,9 @@ void Monthly(){
 void SearchMenu(){
 	printf("日別でのカロリー、または月別でのカロリーを検索します。\n日別での検索を行うか、月別での検索を行うか選択してください。(a.日別・b.月別・c.終了)->\n");
 	scanf("%c",&choice);
+	if (choice == '\n'){
+		scanf("%c",&choice);
+	}
 	switch(choice){
 		case 'a':
 			printf("日別検索\n");
@@ -217,7 +219,7 @@ void SearchMenu(){
 			break;
 		case 'c':
 			printf("終了します\n");
-			OutputMenu();
+			//OutputMenu();
 			break;
 		default:
 			printf("error:有効な値が選択されていません\n");
