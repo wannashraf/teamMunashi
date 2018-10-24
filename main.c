@@ -219,7 +219,6 @@ void SearchMenu(){
 			break;
 		case 'c':
 			printf("終了します\n");
-			//OutputMenu();
 			break;
 		default:
 			printf("error:有効な値が選択されていません\n");
