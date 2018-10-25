@@ -36,11 +36,11 @@ void Input() {
 /// <param name="t">(=theday or themonth),ファイルから読み取ったある1つのデータの1年1月1日からの経過日数</param>
 /// <param name="count">データ配列用</param>
 /// <param name="k">カロリー計算配列用</param>
-/// <param name="total_cal">カロリー計算格納用</param>
+/// <param name="cal">カロリー計算格納用</param>
 /// <param name="storage">日付の比較保存用</param>
 /// <param name="num">(=number of days in the month),ファイルから読み取ったある1つのデータの月の日数</param>
 /// <param name="lnum">検索する期間の最後の月の日数</param>
-int i,total,f,l,t,count,k,total_cal[100],storage,num,lnum;
+int i,total,f,l,t,count,k,cal[100],storage,num,lnum;
 /// <param name="choice">メニュー選択用</param>
 char choice;
 
@@ -100,7 +100,7 @@ void Reset(){
 	count = 0;
 	k = 0;
 	for(i=0;i<100;i++){
-		total_cal[i] = 0;
+		cal[i] = 0;
 	}
 	storage = 0;
 	num = 0;
@@ -136,18 +136,18 @@ void Daily(){
 	while(1){
 		t=GetDays(data[count].year,data[count].month,data[count].day);
 //動作確認用		printf("%d\n",t);
-		if(t == l){
-			total_cal[k]+=data[count].cal;
-			printf("%d/%d/%d -> %d cal\n",data[count].year,data[count].month,data[count].day,total_cal[k]);
-			break;
-		}else if( t > f && t < l || t == f){
+		if( t > f && t < l || t == f || t == l){
 			storage=GetDays(data[count+1].year,data[count+1].month,data[count+1].day);
 			if(t == storage){
-				total_cal[k]+=data[count].cal;
-			}else{
-				total_cal[k]+=data[count].cal;
-				printf("%d/%d/%d -> %d cal\n",data[count].year,data[count].month,data[count].day,total_cal[k]);
+				cal[k]+=data[count].cal;
+			}else if(data[count+1].day != '\0'){
+				cal[k]+=data[count].cal;
+				printf("%d/%d/%d -> %d cal\n",data[count].year,data[count].month,data[count].day,cal[k]);
 				k++;
+			}else{
+				cal[k]+=data[count].cal;
+				printf("%d/%d/%d -> %d cal\n",data[count].year,data[count].month,data[count].day,cal[k]);
+				break;
 			}
 		}else if(t < f && t < l){
 			
@@ -176,14 +176,14 @@ void Monthly(){
 			num=DaysInMonth(data[count].year,data[count].month);
 			storage=GetDays(data[count+1].year,data[count+1].month,num);
 			if(t == storage){
-				total_cal[k]+=data[count].cal;
+				cal[k]+=data[count].cal;
 			}else if(data[count+1].month != '\0'){
-				total_cal[k]+=data[count].cal;
-				printf("%d/%d -> %d cal\n",data[count].year,data[count].month,total_cal[k]);
+				cal[k]+=data[count].cal;
+				printf("%d/%d -> %d cal\n",data[count].year,data[count].month,cal[k]);
 				k++;
 			}else{
-				total_cal[k]+=data[count].cal;
-				printf("%d/%d -> %d cal\n",data[count].year,data[count].month,total_cal[k]);
+				cal[k]+=data[count].cal;
+				printf("%d/%d -> %d cal\n",data[count].year,data[count].month,cal[k]);
 				break;
 			}
 		}else if(t < f && t < l){
@@ -197,7 +197,7 @@ void Monthly(){
 }
 
 void SearchMenu(){
-	printf("日別でのカロリー、または月別でのカロリーを検索します。\n日別での検索を行うか、月別での検索を行うか選択してください。(a.日別・b.月別・c.終了)->\n");
+	printf("日別でのカロリー、または月別でのカロリーを検索します。\n日別での検索を行うか、月別での検索を行うか選択してください。(a.日別,b.月別,c.終了)->\n");
 	scanf("%c",&choice);
 	if (choice == '\n'){
 		scanf("%c",&choice);
