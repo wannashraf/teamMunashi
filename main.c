@@ -5,8 +5,7 @@ struct Data {
 	int year;		//年
 	int month;		//月
 	int day;		//日
-	char youbi;		//曜日
-	char time;		//朝昼夜
+	char time[10];		//朝昼夜
 	char menu[50];	//メニュー
 	int cal;		//カロリー
 }data[100];
@@ -40,7 +39,13 @@ void Input() {
 /// <param name="storage">日付の比較保存用</param>
 /// <param name="num">(=number of days in the month),ファイルから読み取ったある1つのデータの月の日数</param>
 /// <param name="lnum">検索する期間の最後の月の日数</param>
-int i,total,f,l,t,count,k,cal[100],storage,num,lnum;
+/// <param name="j">期間内合計カロリー計算時のカロリー配列の個数保存用</param>
+/// <param name="tnumdays">(=total number of days)データ全体の日の合計</param>
+/// <param name="tmonths">(=total months)データ全体の月の合計</param>
+/// <param name="tcal">(=total calorie)カロリーの合計</param>
+/// <param name="dcave">(=daily calorie average)カロリーの日平均</param>
+/// <param name="mcave">(=monthly calorie average)カロリーの月平均</param>
+int i,total,f,l,t,count,k,cal[100],storage,num,lnum,j,tnumdays,tmonths,tcal,dcave,mcave;
 /// <param name="choice">メニュー選択用</param>
 char choice;
 
@@ -105,6 +110,12 @@ void Reset(){
 	storage = 0;
 	num = 0;
 	lnum = 0;
+	j = 0;
+	tnumdays = 0;
+	tmonths = 0;
+	tcal = 0;
+	dcave = 0;
+	mcave = 0;
 }
 
 void TextRead(){
@@ -125,7 +136,6 @@ void TextRead(){
 }
 
 void Daily(){
-
 	printf("日別の摂取カロリーを算出します。\n 算出したい期間を選択してください。\n 年/月/日〜年/月/日(例:1990/1/1~1990/1/2)->");
 	scanf("%d/%d/%d~%d/%d/%d",&fdate_daily.year,&fdate_daily.month,&fdate_daily.day,&ldate_daily.year,&ldate_daily.month,&ldate_daily.day);
 	printf("以下に %d/%d/%d〜%d/%d/%d の日別カロリーを算出します。\n",fdate_daily.year,fdate_daily.month,fdate_daily.day,ldate_daily.year,ldate_daily.month,ldate_daily.day);
@@ -143,15 +153,26 @@ void Daily(){
 			}else if(data[count+1].day != '\0'){
 				cal[k]+=data[count].cal;
 				printf("%d/%d/%d -> %d cal\n",data[count].year,data[count].month,data[count].day,cal[k]);
+				tnumdays++;
 				k++;
 			}else{
 				cal[k]+=data[count].cal;
 				printf("%d/%d/%d -> %d cal\n",data[count].year,data[count].month,data[count].day,cal[k]);
+				tnumdays++; //else内の日数を足すために+1する
+				j=k+1; //else内の日数を足すために+1する
+				for(k=0;k<j;k++){
+					tcal+=cal[k];
+				}
+//動作確認用				printf("%d",tcal);
+				dcave=tcal/tnumdays;
+				printf("日平均のカロリーは %d calです。（小数点以下切り捨て）\nなお、この値は1日の朝昼夕のデータが全て入力されていなくても1日とみなして算出している値です。\n正しい値を取るにはすべての食事の入力を行ってください。\n",dcave);
 				break;
 			}
 		}else if(t < f && t < l){
 			
 		}else{
+			printf("error:有効な値が選択されていません。検索メニューに戻ります\nTips:期間内のデータが3つ未満の場合、カロリー計算は行えません。\n");
+			Reset();
 			break;
 		}
 		count++;
@@ -180,15 +201,29 @@ void Monthly(){
 			}else if(data[count+1].month != '\0'){
 				cal[k]+=data[count].cal;
 				printf("%d/%d -> %d cal\n",data[count].year,data[count].month,cal[k]);
+				tnumdays+=num;
+				tmonths++;
 				k++;
 			}else{
 				cal[k]+=data[count].cal;
 				printf("%d/%d -> %d cal\n",data[count].year,data[count].month,cal[k]);
+				tnumdays+=num;
+				tmonths++; //else内の月の数を足すために+1する
+				j=k+1; //else内の月の数を足すために+1する
+				for(k=0;k<j;k++){
+					tcal+=cal[k];
+				}
+//動作確認用					printf("%d",tcal);
+				mcave=tcal/tmonths;
+				dcave=tcal/tnumdays;
+				printf("月平均のカロリーは %d cal,日平均のカロリーは %d calです。（小数点以下切り捨て）\nなお、この値は1日の朝昼夕のデータが全て入力されていなくても1日とみなし、\n1月のデータが全て入力されていなくても1月とみなして算出している値です。\n正しい値を取るにはすべての食事の入力を行ってください。\n",mcave,dcave);
 				break;
 			}
 		}else if(t < f && t < l){
 			
 		}else{
+			printf("error:有効な値が選択されていません。検索メニューに戻ります\nTips:期間内のデータが3つ未満の場合、カロリー計算は行えません。\n");
+			Reset();
 			break;
 		}
 		count++;
@@ -197,7 +232,7 @@ void Monthly(){
 }
 
 void SearchMenu(){
-	printf("日別でのカロリー、または月別でのカロリーを検索します。\n日別での検索を行うか、月別での検索を行うか選択してください。(a.日別,b.月別,c.終了)->\n");
+	printf("------------------------------------------------------------------------------------\n日別でのカロリー、または月別でのカロリーを検索します。\n日別での検索を行うか、月別での検索を行うか選択してください。(a.日別,b.月別,c.終了)->\n");
 	scanf("%c",&choice);
 	if (choice == '\n'){
 		scanf("%c",&choice);
@@ -221,8 +256,7 @@ void SearchMenu(){
 			printf("終了します\n");
 			break;
 		default:
-			printf("error:有効な値が選択されていません\n");
-			SearchMenu();
+			printf("error:有効な値が選択されていません\n終了します\n");
 			break;
 	}
 }
