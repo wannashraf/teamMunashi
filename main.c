@@ -1,9 +1,10 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<math.h>
 #include<stdbool.h>
 
-//自分担当
+//宮前担当
 void Menu();			//最初のメニュー
 void InputMenu();		//入力のメニュー
 void OutputMenu();		//出力のメニュー
@@ -14,16 +15,23 @@ void DicOutput();		//出力関数
 void DicSortCal(int X);	//カロリーソート関数
 void DicSearchName();	//検索関数
 
-//他の人の担当
+//大谷、森担当
+void Rewrite();			//全消去関数
 void Input();			//通常入力関数
 void Add();				//追加入力関数
-void Delete();			//データ削除関
+void Delete();			//データ削除関数
 void Read();			//データ読み込み関数
+
+//木村担当
 void CalorieSort();		//カロリーソート関数
 void DateSort();		//日付ソート関数
+
+//尼崎担当
+void Reset();			//Outputの初期値リセット関数
+void TextRead();		//ファイル読み込み
+void Daily();			//日別カロリー出力関数
+void Monthly();			//月別カロリー出力関数
 void SearchMenu();		//範囲指定関数
-void Reset();
-void TextRead();
 
 struct Data {
 	int year;		//年
@@ -32,6 +40,7 @@ struct Data {
 	char time[10];	//朝昼夜
 	char menu[50];	//メニュー
 	int cal;		//カロリー
+	int number;
 }data[10000];
 
 struct Dic {
@@ -39,14 +48,27 @@ struct Dic {
 	int calorie;	//辞書用カロリー
 }dic[10000];
 
+struct date_daily {
+		int year;		//年
+		int month;		//月
+		int day;		//日
+}fdate_daily,ldate_daily;
 
-int main(){
-	Menu();
+struct date_monthly {
+		int year;		//年
+		int month;		//月	
+}fdate_monthly,ldate_monthly;
+
+
+
+int main() {
+	Menu();			//メニュー関数へ
 	return 0;
 }
 
 int total;
 int DataCount;
+
 
 void Menu() {
 	int Num;			//int型に変換後入れる変数
@@ -94,7 +116,8 @@ void InputMenu() {
 		printf("＊何をしようかな・・・＊\n");
 		printf(" →  1.今日の食事を記録する\n");
 		printf(" →  2.食べ物を追加する\n");
-		printf(" →  3.食べ物を変更・削除する\n");
+		printf(" →  3.食べ物を削除する\n");
+		printf(" →　4.データを全消去する\n");
 		printf(" →  0.何もしない\n→  ");
 		scanf("%s", Numc);
 		if (strlen(Numc) == 1) Num = Numc[0] - 48;//一文字だった場合に変換する
@@ -109,6 +132,9 @@ void InputMenu() {
 		case 3:
 			Read();			//読み取り関数
 			Delete();		//削除関数へ
+			break;
+		case 4:
+			Rewrite();
 			break;
 		case 0:
 			printf("＊＊メインメニューへ戻ります＊＊\n\n");
@@ -145,8 +171,11 @@ void OutputMenu() {
 		case 2:
 			Read();			//読み取り関数
 			DateSort();		//日付順でソート
+			printf("・\n・\n＊＊・・・日付順で並び替えが完了しました・・・＊＊\n\n");
 			break;
 		case 3:
+			Read();
+			DateSort();
 			SearchMenu();		//日付の範囲指定してソート
 			break;
 		case 0:
@@ -226,15 +255,14 @@ void DicClean() {
 	int count = 0;
 
 	fi = fopen("Calorie.txt", "r");
-	while (fscanf(fi, "%d/%d/%d/%s /%s /%d\n", &data[count].year, &data[count].month, &data[count].day, data[count].time, data[count].menu, &data[count].cal) != EOF) {
+	while (fscanf(fi, "%d/%d/%d/%s /%s /%d", &data[count].year, &data[count].month, &data[count].day, data[count].time, data[count].menu, &data[count].cal) != EOF) {
 		count++;
 	}
 	for (int i = 0; i < count; i++) {
 		s[i] = true;		//全てにtrue
 	}
-
 	fclose(fi);
-	fo = fopen("Dictionary.txt", "w");
+	
 
 	for (int i = 0; i < count - 1; i++) {
 		for (int j = i + 1; j < count; j++) {
@@ -244,6 +272,7 @@ void DicClean() {
 		}
 	}
 
+	fo = fopen("Dictionary.txt", "w");
 	for (int i = 0; i < count; i++) {
 		if (s[i]) {
 			fprintf(fo, "%s /%d\n", data[i].menu, data[i].cal);//trueのみファイル出力
@@ -259,6 +288,7 @@ void DicRead() {			//辞書からデータの個数とデータを入手
 	while (fscanf(fo, "%s /%d\n", dic[DataCount].menu, &dic[DataCount].calorie) != EOF) {
 		DataCount++;
 	}
+	fclose(fo);
 }
 
 void DicOutput() {
@@ -282,12 +312,12 @@ void DicSortCal(int X) {	//カロリー順並び替え関数
 		}
 	}
 	F5 = fopen("Dictionary.txt", "w");
-	if (X == 1) {//引数が1ならそのまま出力
+	if (X == 2) {//引数が2ならそのまま出力
 		for (int i = 0; i < DataCount; i++) {
 			fprintf(F5, "%s /%d\n", dic[i].menu, dic[i].calorie);
 		}
 	}
-	else if (X == 2) {//2なら逆順に出力
+	else if (X == 1) {//1なら逆順に出力
 		for (int i = DataCount - 1; i >= 0; i--) {
 			fprintf(F5, "%s /%d\n", dic[i].menu, dic[i].calorie);
 		}
@@ -295,13 +325,14 @@ void DicSortCal(int X) {	//カロリー順並び替え関数
 	fclose(F5);
 }
 
-void DicSearchName() {		//名前検索関数
+void DicSearchName() {//名前検索関数
 	int Box, count;
 	char str[100];
 	char *ret;
-	bool ans[10000];//比較のためのフラグ
+	bool ans[10000];
 	while (1) {
 		count = 0;
+		Box=-1;
 		for (int i = 0; i < DataCount; i++) {//全部trueに
 			ans[i] = true;
 		}
@@ -338,17 +369,199 @@ void DicSearchName() {		//名前検索関数
 }
 
 //森、大谷担当//
-void Input() {
-	printf("ここで三食の入力を行う。。。\n\n");
+void Rewrite(){
+	FILE *fw;
+	fw=fopen("Calorie.txt","w");
+	fclose(fw);
+	printf("・\n・\n＊＊・・・データの全消去が完了しました・・・＊＊\n\n");
 }
 
-void Add() {
-	printf("ここで追加のの入力を行う。。。\n\n");
+void Input()
+{
+	char breakfast[100],lunch[100],dinner[100];
+	int year,month,day,breakfastcalorie,lunchcalorie,dinnercalorie;
+	FILE *fa;
+	fa=fopen("Calorie.txt","a");
+		if(fa==NULL){
+			printf("ファイルが開けませんでした！\n");
+		}
+		printf("＊食事の新規入力を行います＊\n");
+		printf("＊（「0」で入力を終了します）＊\n");
+
+		printf("＊食事した日付を入力してください＊\n");
+
+		printf("＊何年？＊\n");
+		printf("＊例：西暦2000年→「2000」と入力してください＊\n");
+		scanf("%d",&year);
+
+		printf("＊何月？＊\n");
+		printf("＊例：1月→「01」と入力してください＊\n");
+		scanf("%d",&month);
+
+		printf("＊何日？＊\n");
+		printf("＊例：31日→「31」と入力してください＊\n");
+		scanf("%d",&day);
+
+	printf("＊では食事と食事のカロリーの入力を開始します！＊\n");
+
+		printf("＊入力を終了し、次に移りたいときは「0」を入力してください＊\n");
+
+	while(1){
+		printf("＊%d年%d月%d日の朝食はなんですか？＊\n",year,month,day);
+		scanf("%s",breakfast);
+		if(breakfast[0]=='0') break;
+		printf("＊朝食のカロリーはいくらですか？＊\n");
+		printf("＊例：2000kcal→「2000」と入力してください＊\n");
+		scanf("%d",&breakfastcalorie);
+		fprintf(fa,"%d/%d/%d/breakfast /%s /%d\n",year,month,day,breakfast,breakfastcalorie);
+	}
+	
+	while(1){
+		printf("＊%d年%d月%d日の昼食はなんですか？＊\n",year,month,day);
+		scanf("%s",lunch);
+		if(lunch[0]=='0') break;
+		printf("＊昼食のカロリーはいくらですか？＊\n");
+		scanf("%d",&lunchcalorie);
+		fprintf(fa,"%d/%d/%d/lunch /%s /%d\n",year,month,day,lunch,lunchcalorie);
+	}
+
+	while(1){
+		printf("＊%d年%d月%d日の夕食はなんですか？＊\n",year,month,day);
+		scanf("%s",dinner);
+		if(dinner[0]=='0') break;
+		printf("＊夕食のカロリーはいくらですか？＊\n");
+		scanf("%d",&dinnercalorie);
+		fprintf(fa,"%d/%d/%d/dinner /%s /%d\n",year,month,day,dinner,dinnercalorie);
+	}	
+	printf("＊%d年%d月%d日の食事の入力が完了しました！＊\n",year,month,day);
+	printf("＊メニュー画面に戻ります＊\n\n");
+	fclose(fa);
 }
 
-void Delete() {
-	printf("ここでデータの削除を行う。。。\n\n");
+void Add()
+{
+	char breakfast[100],lunch[100],dinner[100],Numc[10];
+	int year,month,day,breakfastcalorie,lunchcalorie,dinnercalorie,Num;
+	FILE *fa;
+	fa=fopen("Calorie.txt","a");
+	if(fa==NULL){
+		printf("ファイルが開けませんでした！\n");
+	}
+	printf("＊食事の追加を行います＊\n");
+	printf("＊（「0」で入力を終了します）＊\n");
+
+	printf("＊食事した日付を入力してください＊\n");
+
+	printf("＊何年？＊\n");
+	printf("＊例：西暦2000年→「2000」と入力してください＊\n");
+	scanf("%d",&year);
+
+
+	printf("＊何月？＊\n");
+	printf("＊例：1月→「01」と入力してください＊\n");
+	scanf("%d",&month);
+
+	printf("＊何日？＊\n");
+	printf("＊例：31日→「31」と入力してください＊\n");
+	scanf("%d",&day);
+	
+	printf("＊時間帯は？＊\n");
+	printf("  →  1.朝\n");
+	printf("  →  2.昼\n");
+	printf("  →  3.夜\n→ ");
+	scanf("%s", Numc);
+	if (strlen(Numc) == 1) Num = Numc[0] - 48;//一文字だった場合に変換する
+	switch (Num)
+	{
+		case 1:
+			printf("＊では食事と食事のカロリーの入力を開始します！＊\n");
+			printf("＊%d年%d月%d日の朝食はなんですか？＊\n",year,month,day);
+			scanf("%s",breakfast);
+			
+			printf("＊朝食のカロリーはいくらですか？＊\n");
+			scanf("%d",&breakfastcalorie);
+			fprintf(fa,"%d/%d/%d/breakfast /%s /%d\n",year,month,day,breakfast,breakfastcalorie);
+			printf("＊%d年%d月%d日の朝食の入力が完了しました！＊\n",year,month,day);
+			break;
+		
+		case 2:
+			printf("＊では食事と食事のカロリーの入力を開始します！＊\n");
+			printf("＊%d年%d月%d日の昼食はなんですか？＊\n",year,month,day);
+			scanf("%s",lunch);
+			
+			printf("＊昼食のカロリーはいくらですか？＊\n");
+			scanf("%d",&lunchcalorie);
+			fprintf(fa,"%d/%d/%d/lunch /%s /%d\n",year,month,day,lunch,lunchcalorie);
+			printf("＊%d年%d月%d日の昼食の入力が完了しました！＊\n",year,month,day);
+			break;
+			
+		case 3:
+			printf("＊では食事と食事のカロリーの入力を開始します！＊\n");
+			printf("＊%d年%d月%d日の夕食はなんですか？＊\n",year,month,day);
+			scanf("%s",dinner);
+			
+			printf("＊夕食のカロリーはいくらですか？＊\n");
+			scanf("%d",&dinnercalorie);
+			fprintf(fa,"%d/%d/%d/dinner /%s /%d\n",year,month,day,dinner,dinnercalorie);
+			printf("＊%d年%d月%d日の夕食の入力が完了しました！＊\n",year,month,day);
+			break;
+			
+		default:
+			printf("＊入力が間違っています＊\n");
+			break;
+	}
+	printf("＊メニュー画面に戻ります＊\n\n");
+	fclose(fa);
 }
+
+void Delete(){
+    int i,j,n,ynum;
+    struct Data a;
+    FILE *fw;
+    
+    printf("消去する日付を入力してください\n");
+    printf("消去する年を入力してください\n");
+		printf("＊例：西暦2000年→「2000」と入力してください＊\n");
+    scanf("%d",&a.year);
+		printf("消去する月を入力してください\n");
+		printf("＊例：1月→「01」と入力してください＊\n");
+    scanf("%d",&a.month);
+		printf("消去する日を入力してください\n");
+		printf("＊例：31日→「31」と入力してください＊\n");
+    scanf("%d",&a.day);
+    for(i=0;i<total;i++){
+        if((a.year == data[i].year)&&(a.month == data[i].month)&&(a.day == data[i].day)){
+            ynum++;
+            data[i].number = ynum;
+            printf("[%d] %d %d %d %s %s %d\n",ynum,data[i].year,data[i].month,data[i].day,data[i].time,data[i].menu,data[i].cal);
+        }
+    }
+    if(ynum == 0){
+        printf("該当するものがありませんでした\n");
+        printf("削除モジュールを終了します\n");
+    }else{
+		printf("削除したい番号を入力してください\n");
+		scanf("%d",&n);
+		i=0;
+		while(i != total){
+		    if(data[i].number == n) break;
+		    i++;
+		}
+		for(j=i;j<total-1;j++){
+		    data[j] = data[j+1];
+		}
+		total--;
+
+		fw = fopen("Calorie.txt","w");
+		for(i=0;i<total;i++){
+		    fprintf(fw,"%d/%d/%d/%s /%s /%d\n",data[i].year,data[i].month,data[i].day,data[i].time,data[i].menu,data[i].cal);
+		}
+		printf("・\n・\n＊＊・・・選択したデータの削除が完了しました・・・＊＊\n\n");
+		fclose(fw);
+    }
+}
+
+
 
 //尼崎担当//
 
@@ -369,8 +582,9 @@ void Delete() {
 /// <param name="tcal">(=total calorie)カロリーの合計</param>
 /// <param name="dcave">(=daily calorie average)カロリーの日平均</param>
 /// <param name="mcave">(=monthly calorie average)カロリーの月平均</param>
-int i,total,f,l,t,count,k,cal[100],storage,num,lnum,j,tnumdays,tmonths,tcal,dcave,mcave;
 /// <param name="choice">メニュー選択用</param>
+
+int i,total,f,l,t,count,k,cal[100],storage,num,lnum,j,tnumdays,tmonths,tcal,dcave,mcave;
 char choice;
 
 /// <param name="y">年</param>
@@ -410,16 +624,6 @@ static int DaysInMonth(int y, int m){
 	}
 }
 
-struct date_daily {
-		int year;		//年
-		int month;		//月
-		int day;		//日
-}fdate_daily,ldate_daily;
-
-struct date_monthly {
-		int year;		//年
-		int month;		//月	
-}fdate_monthly,ldate_monthly;
 
 void Reset(){
 	total = 0;
@@ -495,7 +699,8 @@ void Daily(){
 		}else if(t < f && t < l){
 			
 		}else{
-			printf("error:有効な値が選択されていません。検索メニューに戻ります\nTips:期間内のデータが3つ未満の場合、カロリー計算は行えません。\n");
+			scanf("%*s");
+			printf("error:有効な値が選択されていません。\nTips:期間内のデータが3つ未満の場合、カロリー計算は行えません。\n");
 			Reset();
 			break;
 		}
@@ -540,13 +745,18 @@ void Monthly(){
 //動作確認用					printf("%d",tcal);
 				mcave=tcal/tmonths;
 				dcave=tcal/tnumdays;
-				printf("月平均のカロリーは %d cal,日平均のカロリーは %d calです。（小数点以下切り捨て）\nなお、この値は1日の朝昼夕のデータが全て入力されていなくても1日とみなし、\n1月のデータが全て入力されていなくても1月とみなして算出している値です。\n正しい値を取るにはすべての食事の入力を行ってください。\n",mcave,dcave);
+				printf("月平均のカロリーは %d cal,日平均のカロリーは %d calです。（小数点以下切り捨て）\n",mcave,dcave);
+				printf("なお、この値は1日の朝昼夕のデータが全て入力されていなくても1日とみなし、\n");
+				printf("1月のデータが全て入力されていなくても1月とみなして算出している値です。\n");
+				printf("正しい値を取るにはすべての食事の入力を行ってください。\n");
 				break;
 			}
 		}else if(t < f && t < l){
 			
 		}else{
-			printf("error:有効な値が選択されていません。検索メニューに戻ります\nTips:期間内のデータが3つ未満の場合、カロリー計算は行えません。\n");
+			scanf("%*s");
+			printf("error:有効な値が選択されていません。\n");
+			printf("Tips:期間内のデータが3つ未満の場合、カロリー計算は行えません。\n");
 			Reset();
 			break;
 		}
@@ -556,27 +766,29 @@ void Monthly(){
 }
 
 void SearchMenu(){
-	printf("------------------------------------------------------------------------------------\n日別でのカロリー、または月別でのカロリーを検索します。\n日別での検索を行うか、月別での検索を行うか選択してください。(a.日別,b.月別,c.終了)->\n");
-	scanf("%c",&choice);
-	if (choice == '\n'){
-		scanf("%c",&choice);
-	}
-	switch(choice){
-		case 'a':
+	int Num;			//int型に変換後入れる変数
+	char Numc[10];
+	printf("------------------------------------------------------------------------------------\n");
+	printf("日別でのカロリー、または月別でのカロリーを検索します。\n");
+	printf("日別での検索を行うか、月別での検索を行うか選択してください。(1.日別,2.月別,3.終了)->\n");
+	scanf("%s", Numc);
+	if (strlen(Numc) == 1) Num = Numc[0] - 48;//一文字だった場合に変換する
+	switch(Num){
+		case 1:
 			printf("日別検索\n");
 			Reset();
 			TextRead();
 			Daily();
 			SearchMenu();
 			break;
-		case 'b':
+		case 2:
 			printf("月別検索\n");
 			Reset();
 			TextRead();
 			Monthly();
 			SearchMenu();
 			break;
-		case 'c':
+		case 3:
 			printf("終了します\n");
 			break;
 		default:
@@ -586,13 +798,16 @@ void SearchMenu(){
 }
 
 
+
+
 //木村担当//
 void Read()
 {
 	FILE *fi;
 	fi = fopen("Calorie.txt","r");
+	total = 0;
 	while(fscanf(fi,"%d/%d/%d/%s /%s /%d\n",&data[total].year,&data[total].month,&data[total].day,data[total].time,data[total].menu,&data[total].cal) != EOF){
-		printf("%d/%d/%d/ %s / %s /%d\n",data[total].year,data[total].month,data[total].day,data[total].time,data[total].menu,data[total].cal);
+		//printf("%d/%d/%d/ %s / %s /%d\n",data[total].year,data[total].month,data[total].day,data[total].time,data[total].menu,data[total].cal);
 		total++;
 	}
 	fclose(fi);
@@ -603,8 +818,6 @@ void DateSort(){
 	struct Data a;
 	FILE *fw;
 
-	fw = fopen("Calorie.txt","w");
-	fprintf(fw,"%d\n",total);
 	for(i=0;i<total;i++){
 		for(j=i;j<total;j++){
 			if(data[i].year > data[j].year){
@@ -626,6 +839,8 @@ void DateSort(){
 			}
 		}
 	}
+	
+	fw = fopen("Calorie.txt","w");
 	for(i=0;i<total;i++)
 		fprintf(fw,"%d/%d/%d/%s /%s /%d\n",data[i].year,data[i].month,data[i].day,data[i].time,data[i].menu,data[i].cal);
 	fclose(fw);
@@ -635,9 +850,6 @@ void CalorieSort(){
 	int i,j,b;
 	struct Data a;
 	FILE *fw;
-
-	fw = fopen("Calorie.txt","w");
-	fprintf(fw,"%d\n",total);
 
 	printf("昇順 -> 1\n");
 	printf("降順 -> 2\n");
@@ -654,37 +866,32 @@ void CalorieSort(){
 				}
 			}
 			break;
-		default:
+			
+		case 2:
+			for(i=0;i<total;i++){
+				for(j=i;j<total;j++){
+					if(data[i].cal < data[j].cal){
+						a = data[i];
+						data[i] = data[j];
+						data[j] = a;
+					}
+				}
+			}
 			break;
+			
+		default:
+			printf("＊入力が間違っています＊\nもし止まってしまったら「q」を入力してください\n");
+			scanf("%*s");
+			printf("＊戻ります＊\n\n");
+			break;		
 	}
+	
+	if(b==1||b==2){
+		printf("・\n・\n＊＊・・・カロリー順で並び替えが完了しました・・・＊＊\n\n");
+	}
+	fw = fopen("Calorie.txt","w");
 	for(i=0;i<total;i++)
 		fprintf(fw,"%d/%d/%d/%s /%s /%d\n",data[i].year,data[i].month,data[i].day,data[i].time,data[i].menu,data[i].cal);
 	fclose(fw);
 }
 
-void Delete(){
-	int i,n;
-	struct Data a;
-	FILE *fw;
-
-	fw = fopen("Calorie.txt","w");
-	printf("消去する日付を入力してください\n");
-	scanf("%d",&a.year);
-	scanf("%d",&a.month);
-	scanf("%d",&a.day);
-	for(i=0;i<total;i++){
-		if((a.year == data[i].year)&&(a.month == data[i].month)&&(a.day == data[i].day)){
-			printf("[%d] %d %d %d %s %s %d\n",i,data[i].year,data[i].month,data[i].day,data[i].time,data[i].menu,data[i].cal);
-		}
-	}
-	printf("削除したい番号を入力してください\n");
-	scanf("%d",&n);
-	total--;
-	for(i=n;i<total;i++){
-		data[i] = data[i+1];
-	}
-	for(i=0;i<total;i++){
-		fprintf(fw,"%d/%d/%d/%s /%s /%d\n",data[i].year,data[i].month,data[i].day,data[i].time,data[i].menu,data[i].cal);
-	}
-	fclose(fw);
-}
