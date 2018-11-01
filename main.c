@@ -664,7 +664,9 @@ void TextRead(){
 }
 
 void Daily(){
-	printf("日別の摂取カロリーを算出します。\n 算出したい期間を選択してください。\n 年/月/日〜年/月/日(例:1990/1/1~1990/1/2)->");
+	printf("日別の摂取カロリーを算出します。\n");
+	printf("算出したい期間を選択してください。\n");
+	printf("年 / 月 / 日〜年 / 月 / 日(例:1990 / 1 / 1~1990 / 1 / 2)->");
 	scanf("%d/%d/%d~%d/%d/%d",&fdate_daily.year,&fdate_daily.month,&fdate_daily.day,&ldate_daily.year,&ldate_daily.month,&ldate_daily.day);
 	printf("以下に %d/%d/%d〜%d/%d/%d の日別カロリーを算出します。\n",fdate_daily.year,fdate_daily.month,fdate_daily.day,ldate_daily.year,ldate_daily.month,ldate_daily.day);
 	
@@ -693,14 +695,17 @@ void Daily(){
 				}
 //動作確認用				printf("%d",tcal);
 				dcave=tcal/tnumdays;
-				printf("日平均のカロリーは %d calです。（小数点以下切り捨て）\nなお、この値は1日の朝昼夕のデータが全て入力されていなくても1日とみなして算出している値です。\n正しい値を取るにはすべての食事の入力を行ってください。\n",dcave);
+				printf("日平均のカロリーは %d calです。（小数点以下切り捨て）\n");
+				printf("なお、この値は1日の朝昼夕のデータが全て入力されていなくても1日とみなして算出している値です。\n");
+				printf("正しい値を取るにはすべての食事の入力を行ってください。\n",dcave);
 				break;
 			}
 		}else if(t < f && t < l){
 			
 		}else{
 			scanf("%*s");
-			printf("error:有効な値が選択されていません。\nTips:期間内のデータが3つ未満の場合、カロリー計算は行えません。\n");
+			printf("error:有効な値が選択されていません。\n");
+			printf("Tips:期間内のデータが3つ未満の場合、カロリー計算は行えません。\n");
 			Reset();
 			break;
 		}
@@ -710,7 +715,9 @@ void Daily(){
 
 void Monthly(){
 
-	printf("月別の摂取カロリーを算出します。\n 算出したい期間を選択してください。\n 年/月〜年/月(例:1990/1~1990/2)->");
+	printf("月別の摂取カロリーを算出します。\n");
+	printf("算出したい期間を選択してください。\n");
+	printf("年 / 月〜年 / 月(例:1990 / 1~1990 / 2)->");
 	scanf("%d/%d~%d/%d",&fdate_monthly.year,&fdate_monthly.month,&ldate_monthly.year,&ldate_monthly.month);
 	printf("以下に %d/%d〜%d/%d の月別カロリーを算出します。\n",fdate_monthly.year,fdate_monthly.month,ldate_monthly.year,ldate_monthly.month);
 	
